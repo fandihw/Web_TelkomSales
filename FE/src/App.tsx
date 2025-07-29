@@ -8,6 +8,7 @@ import DashboardAdmin from "./pages/dashboardAdmin"
 import Register from "./pages/register"
 import DashboardSales from "./pages/dashboardSales"
 import VisualisasiData from "./pages/visualisasiData"
+import UsersPage from "./pages/UserPage"
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -89,6 +90,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <VisualisasiData />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+              <UsersPage />
             </ProtectedRoute>
           }
         />

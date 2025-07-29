@@ -1,7 +1,22 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
 import type React from "react"
-import { ChevronLeft, ChevronRight, LogOut, Home, BarChart3, Users, Calendar, TrendingUp, ChevronDown, Globe, AlertCircle, } from "lucide-react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  Home,
+  BarChart3,
+  Users,
+  Calendar,
+  TrendingUp,
+  ChevronDown,
+  Globe,
+  AlertCircle,
+  User,
+  UserSearch,
+  UserPlus2Icon,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 // Type definitions
@@ -78,7 +93,7 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
     "Media & Communication",
   ]
 
-    // Membuat data lengkap dengan semua ekosistem (termasuk nol)
+  // Membuat data lengkap dengan semua ekosistem (termasuk nol)
   const completeData = allEcosystems
     .map((ecosystem) => {
       const existingData = data.find((item) => item.name === ecosystem)
@@ -105,7 +120,17 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
   }
 
   const defaultColors = [
-    "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4", "#84CC16", "#F97316", "#EC4899", "#6B7280", "#14B8A6",
+    "#3B82F6",
+    "#10B981",
+    "#F59E0B",
+    "#EF4444",
+    "#8B5CF6",
+    "#06B6D4",
+    "#84CC16",
+    "#F97316",
+    "#EC4899",
+    "#6B7280",
+    "#14B8A6",
   ]
 
   const colors = colorPalette || defaultColors
@@ -142,34 +167,36 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
         const colorIndex = completeData.findIndex((d) => d.name === item.name)
 
         return (
-        <div key={item.name} className="group hover:bg-gray-50 p-3 rounded-xl transition-all duration-300 border border-gray-300 hover:border-gray-300">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-3">
-              <span className="text-xl">{getEcosystemIcon(item.name)}</span>
-              <div>
-                <span className="text-sm font-semibold text-black">{item.name}</span>
+          <div
+            key={item.name}
+            className="group hover:bg-gray-50 p-3 rounded-xl transition-all duration-300 border border-gray-300 hover:border-gray-300"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-3">
+                <span className="text-xl">{getEcosystemIcon(item.name)}</span>
+                <div>
+                  <span className="text-sm font-semibold text-black">{item.name}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-lg font-bold text-gray-900">{item.value}</div>
+                <div className="text-xs text-gray-500">{percentage.toFixed(1)}%</div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-lg font-bold text-gray-900">{item.value}</div>
-              <div className="text-xs text-gray-500">{percentage.toFixed(1)}%</div>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div
-                className="h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
-                style={{
-                  width: `${barWidth}%`,
-                  backgroundColor: colors[colorIndex % colors.length],
-                  minWidth: item.value > 0 ? "8px" : "0px",
-                }}
-              >
+            <div className="relative">
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div
+                  className="h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                  style={{
+                    width: `${barWidth}%`,
+                    backgroundColor: colors[colorIndex % colors.length],
+                    minWidth: item.value > 0 ? "8px" : "0px",
+                  }}
+                ></div>
               </div>
             </div>
           </div>
-        </div>
-      )
+        )
       })}
     </div>
   )
@@ -215,7 +242,19 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
   const providerCategories = {
     telkom: ["IndiHome", "Indibiz", "Wifi.id", "Astinet"],
     kompetitor: [
-      "MyRepublic", "Biznet", "First Media", "Iconnet", "XL Smart", "MNC Play", "IFORTE", "Hypernet", "CBN", "Fibernet", "Fiberstar", "Other",],
+      "MyRepublic",
+      "Biznet",
+      "First Media",
+      "Iconnet",
+      "XL Smart",
+      "MNC Play",
+      "IFORTE",
+      "Hypernet",
+      "CBN",
+      "Fibernet",
+      "Fiberstar",
+      "Other",
+    ],
   }
 
   // Create complete data with all providers (including zeros)
@@ -662,7 +701,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
     const { providers, teldas, allSTOs, tableData, groupMapping } = groupData
 
     // Group providers by category
-    const telkomProviders = ["IndiHome", "Indibiz", "Wifi.id", "Astinet",]
+    const telkomProviders = ["IndiHome", "Indibiz", "Wifi.id", "Astinet"]
     const kompetitorProviders = [
       "MyRepublic",
       "Biznet",
@@ -904,8 +943,7 @@ const FeedbackDistributionChart = ({ data, title }: ChartProps) => {
                       width: `${percentage}%`,
                       backgroundColor: colors.bg,
                     }}
-                  >
-                  </div>
+                  ></div>
                 </div>
               </div>
             </div>
@@ -1309,6 +1347,10 @@ const VisualisasiData = () => {
     navigate("/dashboardAdmin")
   }
 
+  const handleUsersClick = () => {
+    navigate("/users")
+  }
+
   const handleRegisterClick = () => {
     const role = localStorage.getItem("role")
     if (role === "superadmin") {
@@ -1364,13 +1406,23 @@ const VisualisasiData = () => {
             <Home size={20} />
             {!sidebarCollapsed && <span className="font-medium">Dashboard</span>}
           </button>
+
+          <button
+            onClick={handleUsersClick}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            <UserSearch size={20} />
+            {!sidebarCollapsed && <span className="font-medium">User</span>}
+          </button>
+
           <button
             onClick={handleRegisterClick}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
           >
-            <Users size={20} />
+            <UserPlus2Icon size={20} />
             {!sidebarCollapsed && <span className="font-medium">Register Akun</span>}
           </button>
+
           <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors">
             <BarChart3 size={20} />
             {!sidebarCollapsed && <span className="font-medium">Visualisasi Data</span>}
@@ -1542,25 +1594,6 @@ const VisualisasiData = () => {
                 </div>
               </div>
 
-              {/* Stats Cards 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-auto-fit gap-6">
-                <StatCard
-                  title="Total Kunjungan"
-                  value={chartData.stats.totalKunjungan}
-                  icon={Activity}
-                  color="text-blue-600"
-                  bgColor="bg-blue-50"
-                />
-                <StatCard
-                  title="Tertarik Berlangganan"
-                  value={chartData.stats.successRate}
-                  icon={TrendingUp}
-                  color="text-green-600"
-                  bgColor="bg-green-50"
-                />
-              </div>
-              */}
-
               {/* Charts Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 {/* Kunjungan per Ekosistem - Enhanced Horizontal Bar Chart */}
@@ -1568,7 +1601,16 @@ const VisualisasiData = () => {
                   data={chartData.ekosistemChart.slice(0, 10)}
                   title="Kunjungan per Ekosistem"
                   colorPalette={[
-                    "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4", "#84CC16", "#F97316", "#EC4899", "#6B7280",
+                    "#3B82F6",
+                    "#10B981",
+                    "#F59E0B",
+                    "#EF4444",
+                    "#8B5CF6",
+                    "#06B6D4",
+                    "#84CC16",
+                    "#F97316",
+                    "#EC4899",
+                    "#6B7280",
                   ]}
                 />
 

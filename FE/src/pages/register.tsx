@@ -17,6 +17,8 @@ import {
   LogOut,
   Home,
   BarChart3,
+  UserSearch,
+  UserPlus2Icon,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -234,6 +236,10 @@ export default function Register() {
     navigate("/dashboardAdmin")
   }
 
+  const handleUsersClick = () => {
+    navigate("/users")
+  }
+
   const handleVisualisasiClick = () => {
     navigate("/visualisasi-data")
   }
@@ -273,8 +279,16 @@ export default function Register() {
             {!sidebarCollapsed && <span className="font-medium">Dashboard</span>}
           </button>
 
+          <button
+            onClick={handleUsersClick}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            <UserSearch size={20} />
+            {!sidebarCollapsed && <span className="font-medium">User</span>}
+          </button>
+
           <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors">
-            <Users size={20} />
+            <UserPlus2Icon size={20} />
             {!sidebarCollapsed && <span className="font-medium">Register Akun</span>}
           </button>
 

@@ -1,7 +1,34 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Search, ChevronDown, Download, BarChart3, Users, Eye,LogOut,Home, X, ImageIcon, Loader2, AlertCircle, Info, } from "lucide-react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  ChevronDown,
+  Download,
+  BarChart3,
+  Users,
+  Eye,
+  LogOut,
+  Home,
+  X,
+  ImageIcon,
+  Loader2,
+  AlertCircle,
+  Info,
+  UserRound,
+  Trash,
+  User,
+  UserX,
+  UserCog,
+  UserRoundPlus,
+  Users2,
+  Users2Icon,
+  UsersIcon,
+  UserSearch,
+  UserPlus2Icon,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 const DashboardAdmin = () => {
@@ -469,10 +496,18 @@ const DashboardAdmin = () => {
           </button>
 
           <button
+            onClick={() => navigate("/users")}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            <UserSearch size={20} />
+            {!sidebarCollapsed && <span className="font-medium">User</span>}
+          </button>
+
+          <button
             onClick={handleRegisterClick}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
           >
-            <Users size={20} />
+            <UserPlus2Icon size={20} />
             {!sidebarCollapsed && <span className="font-medium">Register Akun</span>}
           </button>
 

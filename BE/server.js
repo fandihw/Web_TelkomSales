@@ -43,12 +43,14 @@ const authRoutes = require("./routes/authRoutes")
 const visitDataRoutes = require("./routes/visitDataRoutes")
 const dataRoutes = require("./routes/dataRoutes")
 const photoRoutes = require("./routes/photoRoutes")
+const userRoutes = require("./routes/UserRoutes")
 
 // Use Routes
 app.use("/api/auth", authRoutes)
 app.use("/api", visitDataRoutes)
 app.use("/api", dataRoutes)
 app.use("/api", photoRoutes)
+app.use("/api", userRoutes)
 
 // Health check endpoint dengan timestamp
 app.get("/api/health", (req, res) => {
@@ -66,6 +68,9 @@ app.get("/api/health", (req, res) => {
       "GET /api/photo/:filename",
       "GET /api/photos/:telegram_id",
       "GET /api/photo-detail/:filename",
+      "GET /api/users",
+      "DELETE /api/users/:id",
+      "GET /api/users/:id",
     ],
   })
 })
@@ -86,6 +91,9 @@ app.use("*", (req, res) => {
       "GET /api/photo/:filename",
       "GET /api/photos/:telegram_id",
       "GET /api/photo-detail/:filename",
+      "GET /api/users",
+      "DELETE /api/users/:id",
+      "GET /api/users/:id",
     ],
   })
 })
@@ -110,4 +118,8 @@ app.listen(PORT, () => {
   console.log("   - GET  http://localhost:" + PORT + "/api/data/my-data")
   console.log("   - GET  http://localhost:" + PORT + "/api/photo/:filename")
   console.log("   - GET  http://localhost:" + PORT + "/api/photos/:telegram_id")
+  console.log("   - GET  http://localhost:" + PORT + "/api/photo-detail/:filename")
+  console.log("   - GET  http://localhost:" + PORT + "/api/users")
+  console.log("   - DELETE http://localhost:" + PORT + "/api/users/:id")
+  console.log("   - GET  http://localhost:" + PORT + "/api/users/:id")
 })
