@@ -7,13 +7,11 @@ import {
   LogOut,
   Home,
   BarChart3,
-  Users,
   Calendar,
   TrendingUp,
   ChevronDown,
   Globe,
   AlertCircle,
-  User,
   UserSearch,
   UserPlus2Icon,
 } from "lucide-react"
