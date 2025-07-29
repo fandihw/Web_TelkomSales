@@ -782,67 +782,67 @@ const DashboardAdmin = () => {
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Tanggal
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Kategori
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Nama Sales
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Telda
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           STO
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Jenis Kegiatan
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Nama POI
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Alamat
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Ekosistem
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider whitespace-nowrap">
                           Visit ke
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Nama PIC
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Jabatan PIC
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           No HP
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Provider
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Detail Provider
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Abonemen
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Feedback
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Detail Feedback
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Detail Informasi
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Eviden
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                           Aksi
                         </th>
                       </tr>
@@ -911,7 +911,7 @@ const DashboardAdmin = () => {
                                   item.feedback === "Bertemu dengan PIC/Owner/Manajemen"
                                     ? "bg-green-100 text-green-800"
                                     : item.feedback === "Tidak bertemu dengan PIC"
-                                      ? "bg-yellow-100 text-yellow-800"
+                                      ? "bg-red-100 text-red-800"
                                       : "bg-red-100 text-red-800"
                                 }`}
                               >
@@ -936,7 +936,10 @@ const DashboardAdmin = () => {
                                 {item.feedback_detail || item.detailFeedback || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 max-w-xs truncate">
+                            <td
+                              className="px-4 py-4 text-sm text-gray-900 max-w-xs truncate"
+                              title={item.detail_info || item.detailInformasi || "-"}
+                            >
                               {item.detail_info || item.detailInformasi || "-"}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
