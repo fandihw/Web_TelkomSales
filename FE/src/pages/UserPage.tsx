@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Search, ChevronDown, LogOut, Home, BarChart3, Users, Trash2, Plus, X, AlertTriangle, Trash, TrashIcon, PlusCircle, PlusSquare, UserCheck, User, UserSearch, UserPlus2Icon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search, ChevronDown, LogOut, Home, BarChart3, Plus, X, AlertTriangle, Trash, User, UserSearch, UserPlus2Icon } from 'lucide-react'
 import { useNavigate } from "react-router-dom"
 
 interface User {
@@ -261,7 +261,7 @@ const UsersPage = () => {
         className={`${sidebarCollapsed ? "w-16" : "w-64"} bg-white shadow-lg transition-all duration-300 flex flex-col`}
       >
         {/* Logo Section */}
-        <div className="p-4 border-b border-gray-200">
+                <div className="p-4  border-gray-200">
           <div className="flex items-center justify-between">
             <div className={`${sidebarCollapsed ? "hidden" : "block"}`}>
               <img

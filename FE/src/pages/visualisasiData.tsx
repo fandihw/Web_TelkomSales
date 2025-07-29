@@ -1377,7 +1377,7 @@ const VisualisasiData = () => {
         className={`${sidebarCollapsed ? "w-16" : "w-64"} bg-white shadow-lg transition-all duration-300 flex flex-col`}
       >
         {/* Logo Section */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-gray-200">
           <div className="flex items-center justify-between">
             <div className={`${sidebarCollapsed ? "hidden" : "block"}`}>
               <img
