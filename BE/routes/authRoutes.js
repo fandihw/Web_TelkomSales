@@ -6,59 +6,58 @@ const User = require("../models/User")
 const authenticateToken = require("../middleware/auth")
 const authorizeRoles = require("../middleware/role")
 
-// Login route dengan logging yang lebih detail
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body
 
-    console.log("🔐 Login attempt:")
-    console.log("   Email:", `"${email}"`)
-    console.log("   Password length:", password ? password.length : 0)
+    console.log("Login attempt:")
+    console.log("Email:", `"${email}"`)
+    console.log("Password length:", password ? password.length : 0)
 
     if (!email || !password) {
-      console.log("❌ Missing email or password")
+      console.log("Missing email or password")
       return res.status(400).json({ message: "Email dan password wajib diisi" })
     }
 
     // Debug: cek semua user di database
     const allUsers = await User.find({})
-    console.log("📊 Total users in database:", allUsers.length)
+    console.log("Total users in database:", allUsers.length)
     allUsers.forEach((u, i) => {
       console.log(`   ${i + 1}. "${u.email}" (${u.role}) - Telegram: ${u.telegram_id || "N/A"}`)
     })
 
     // Cari user dengan email yang tepat
     const user = await User.findOne({ email: email.trim() })
-    console.log("🔍 User search result:", user ? "FOUND" : "NOT FOUND")
+    console.log("User search result:", user ? "FOUND" : "NOT FOUND")
 
     if (!user) {
-      console.log("❌ User not found for email:", `"${email}"`)
+      console.log("User not found for email:", `"${email}"`)
 
       // Cek apakah ada user dengan email mirip
       const similarUsers = await User.find({
         email: { $regex: email.replace("@", ""), $options: "i" },
       })
       if (similarUsers.length > 0) {
-        console.log("💡 Similar emails found:")
+        console.log("Similar emails found:")
         similarUsers.forEach((u) => console.log(`   - "${u.email}"`))
       }
 
       return res.status(400).json({ message: "Email atau password salah" })
     }
 
-    console.log("✅ User found:")
-    console.log("   ID:", user._id)
-    console.log("   Name:", user.name)
-    console.log("   Email:", `"${user.email}"`)
-    console.log("   Role:", user.role)
-    console.log("   Telegram ID:", user.telegram_id || "N/A")
+    console.log("User found:")
+    console.log("ID:", user._id)
+    console.log("Name:", user.name)
+    console.log("Email:", `"${user.email}"`)
+    console.log("Role:", user.role)
+    console.log("Telegram ID:", user.telegram_id || "N/A")
 
     // Test password
     const isMatch = await bcrypt.compare(password, user.password)
-    console.log("🔐 Password check:", isMatch ? "✅ VALID" : "❌ INVALID")
+    console.log("Password check:", isMatch ? "VALID" : "INVALID")
 
     if (!isMatch) {
-      console.log("❌ Invalid password for user:", user.email)
+      console.log("Invalid password for user:", user.email)
       return res.status(400).json({ message: "Email atau password salah" })
     }
 
@@ -72,7 +71,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "24h" },
     )
 
-    console.log("✅ Login successful for:", user.email)
+    console.log("Login successful for:", user.email)
 
     res.json({
       token,
@@ -86,7 +85,7 @@ router.post("/login", async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("❌ Login error:", error)
+    console.error("Login error:", error)
     res.status(500).json({ message: "Server error: " + error.message })
   }
 })
@@ -94,7 +93,7 @@ router.post("/login", async (req, res) => {
 // Register route
 router.post("/register", authenticateToken, authorizeRoles("superadmin"), async (req, res) => {
   try {
-    console.log("👤 Register attempt by user:", req.user.id)
+    console.log("Register attempt by user:", req.user.id)
 
     const { name, email, password, role, telegram_id } = req.body
 
@@ -110,7 +109,7 @@ router.post("/register", authenticateToken, authorizeRoles("superadmin"), async 
     // Check if email already exists
     const existingUser = await User.findOne({ email: email.trim() })
     if (existingUser) {
-      console.log("❌ Email already exists:", email)
+      console.log("Email already exists:", email)
       return res.status(400).json({ message: "Email sudah terdaftar" })
     }
 
@@ -134,14 +133,14 @@ router.post("/register", authenticateToken, authorizeRoles("superadmin"), async 
 
     await newUser.save()
 
-    console.log("✅ User registered successfully:")
-    console.log("   Email:", newUser.email)
-    console.log("   Role:", newUser.role)
-    console.log("   Telegram ID:", newUser.telegram_id || "N/A")
+    console.log("User registered successfully:")
+    console.log("Email:", newUser.email)
+    console.log("Role:", newUser.role)
+    console.log("Telegram ID:", newUser.telegram_id || "N/A")
 
     res.json({ message: "User berhasil didaftarkan" })
   } catch (error) {
-    console.error("❌ Register error:", error)
+    console.error("Register error:", error)
     res.status(500).json({ message: "Server error: " + error.message })
   }
 })

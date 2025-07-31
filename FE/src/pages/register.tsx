@@ -82,7 +82,6 @@ export default function Register() {
     }
   }, [])
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -100,7 +99,6 @@ export default function Register() {
       [name]: value,
     }))
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -170,9 +168,7 @@ export default function Register() {
       if (!token) {
         throw new Error("Token tidak ditemukan. Silakan login ulang.")
       }
-
-      console.log("📝 Registering user:", formData.email)
-
+      
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {

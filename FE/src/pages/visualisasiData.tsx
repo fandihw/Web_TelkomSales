@@ -1,6 +1,5 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
-import type React from "react"
 import {
   ChevronLeft,
   ChevronRight,
@@ -17,7 +16,6 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
-// Type definitions
 interface ChartDataItem {
   name: string
   value: number
@@ -91,7 +89,7 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
     "Media & Communication",
   ]
 
-  // Membuat data lengkap dengan semua ekosistem (termasuk nol)
+  // Membuat data lengkap dengan semua ekosistem
   const completeData = allEcosystems
     .map((ecosystem) => {
       const existingData = data.find((item) => item.name === ecosystem)
@@ -151,7 +149,7 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
     return icons[ecosystem] || "🏬"
   }
 
-  // Split data jadi dua kolom jia > 6
+  // Split data jadi dua kolom jika > 6
   const shouldSplit = completeData.length > 6
   const midPoint = Math.ceil(completeData.length / 2)
   const leftColumn = shouldSplit ? completeData.slice(0, midPoint) : completeData
@@ -159,7 +157,7 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
 
   const renderEcosystemBars = (ecosystemData: typeof completeData) => (
     <div className="space-y-3">
-      {ecosystemData.map((item, index) => {
+      {ecosystemData.map((item) => {
         const percentage = total > 0 ? (item.value / total) * 100 : 0
         const barWidth = maxValue > 0 ? (item.value / maxValue) * 100 : 0
         const colorIndex = completeData.findIndex((d) => d.name === item.name)
@@ -234,9 +232,9 @@ const EnhancedHorizontalBarChart = ({ data, title, colorPalette }: ChartProps) =
   )
 }
 
-// Provider Bar Chart - 3 columns
+// Provider Bar Chart - 3 kolom
 const ProviderBarChart = ({ data, title }: ChartProps) => {
-  // Define all providers by category
+  // all providers by category
   const providerCategories = {
     telkom: ["IndiHome", "Indibiz", "Wifi.id", "Astinet"],
     kompetitor: [
@@ -255,7 +253,6 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
     ],
   }
 
-  // Create complete data with all providers (including zeros)
   const allProviders = [...providerCategories.telkom, ...providerCategories.kompetitor]
   const completeData = allProviders.map((provider) => {
     const existingData = data.find((item) => item.name === provider)
@@ -283,7 +280,6 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
     )
   }
 
-  // Provider colors - Updated
   const getProviderColor = (providerName: string, category: string) => {
     const telkomColors: { [key: string]: string } = {
       IndiHome: "#E53E3E",
@@ -348,7 +344,7 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
       <div className={`${bgColor} rounded-lg p-2 mb-3`}>
         <h4 className="text-sm font-semibold text-black-700 text-center">{categoryTitle}</h4>
       </div>
-      {providerData.map((item, index) => {
+      {providerData.map((item) => {
         const percentage = total > 0 ? (item.value / total) * 100 : 0
         const barWidth = maxValue > 0 ? (item.value / maxValue) * 100 : 0
         const color = getProviderColor(item.name, item.category)
@@ -399,18 +395,18 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
         <h3 className="text-base font-bold text-gray-900">{title}</h3>
       </div>
 
-      {/* 3 Column Layout: 1 Telkom + 2 Kompetitor */}
+      {/* 3 kolom : 1 Telkom + 2 Kompetitor */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Telkom Group */}
         <div>{renderProviderBars(telkomData, "TELKOM GROUP", "bg-red-100")}</div>
-        {/* Combined Kompetitor Section */}
+        {/* Kombinasi Kompetitor Section */}
         <div className="lg:col-span-2">
           <div className="bg-orange-100 rounded-lg p-2 mb-3">
             <h4 className="text-sm font-semibold text-black-700 text-center">KOMPETITOR</h4>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              {kompetitor1.map((item, index) => {
+              {kompetitor1.map((item) => {
                 const percentage = total > 0 ? (item.value / total) * 100 : 0
                 const barWidth = maxValue > 0 ? (item.value / maxValue) * 100 : 0
                 const color = getProviderColor(item.name, item.category)
@@ -452,7 +448,7 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
               })}
             </div>
             <div className="space-y-2">
-              {kompetitor2.map((item, index) => {
+              {kompetitor2.map((item) => {
                 const percentage = total > 0 ? (item.value / total) * 100 : 0
                 const barWidth = maxValue > 0 ? (item.value / maxValue) * 100 : 0
                 const color = getProviderColor(item.name, item.category)
@@ -522,7 +518,7 @@ const ProviderBarChart = ({ data, title }: ChartProps) => {
   )
 }
 
-// Provider Tables Component - Separate from Bar Chart
+// Provider Tables Pisah Dari Bar Chart
 const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
   if (!rawData || rawData.length === 0) {
     return (
@@ -533,7 +529,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
     )
   }
 
-  // Telda to STO mapping - Split into two groups
+  // Telda Sto Split
   const teldaSTOMapping = {
     group1: {
       Bangkalan: ["SPG", "KML", "ARB", "KPP", "BKL", "OMB", "BEA", "TBU"],
@@ -552,7 +548,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
   const mapProviderName = (provider: string) => {
     const normalizedProvider = provider.toLowerCase().trim()
     const mapping: { [key: string]: string } = {
-      // Telkom Group variations
+      // Telkom Group
       indihome: "IndiHome",
       "indi home": "IndiHome",
       "telkom indihome": "IndiHome",
@@ -565,7 +561,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       astinet: "Astinet",
       "telkom astinet": "Astinet",
 
-      // Kompetitor variations
+      // Kompetitor
       myrep: "MyRepublic",
       "my rep": "MyRepublic",
       "my-rep": "MyRepublic",
@@ -577,7 +573,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       firstmedia: "First Media",
       "first media": "First Media",
       "first-media": "First Media",
-      firtsmedia: "First Media", // Handle typo in original data
+      firtsmedia: "First Media",
       iconnet: "Iconnet",
       "icon net": "Iconnet",
       "icon+": "Iconnet",
@@ -607,15 +603,13 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       fiberstar: "Fiberstar",
       "fiber star": "Fiberstar",
       "fiber-star": "Fiberstar",
-
-      // Other
       other: "Other",
       "tidak diketahui": "Other",
     }
     return mapping[normalizedProvider] || provider
   }
 
-  // Process data for each group
+  // Process data tiap grup
   const processGroupData = (groupMapping: { [key: string]: string[] }) => {
     if (!rawData) return { providers: [], teldas: Object.keys(groupMapping), allSTOs: [], tableData: {} }
 
@@ -627,7 +621,6 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       })
     })
 
-    // Define all possible providers from both categories
     const allPossibleProviders = [
       // Telkom Group
       "IndiHome",
@@ -650,7 +643,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       "Other",
     ]
 
-    // Create table data structure with all possible providers
+    // Create table
     const tableData: { [key: string]: { [key: string]: number } } = {}
     allPossibleProviders.forEach((provider) => {
       tableData[provider] = {}
@@ -659,7 +652,7 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       })
     })
 
-    // Count occurrences
+    // Count
     rawData.forEach((item: VisitDataItem) => {
       let provider = item.provider || item.provider_detail || item.detailProvider || ""
 
@@ -679,13 +672,6 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
       }
     })
 
-    // Filter out providers with no data for cleaner display, but keep structure
-    const providersWithData = allPossibleProviders.filter((provider) => {
-      const hasData = allSTOs.some((sto) => tableData[provider][sto] > 0)
-      return hasData
-    })
-
-    // Always include all providers to show complete structure
     const providers = allPossibleProviders
 
     return { providers, teldas, allSTOs, tableData, groupMapping }
@@ -694,9 +680,9 @@ const ProviderTables = ({ data, rawData }: ProviderTablesProps) => {
   const group1Data = processGroupData(teldaSTOMapping.group1)
   const group2Data = processGroupData(teldaSTOMapping.group2)
 
-  // Create table component with provider grouping
+  // Create table
   const createTable = (groupData: any, groupTitle: string) => {
-    const { providers, teldas, allSTOs, tableData, groupMapping } = groupData
+    const { teldas, allSTOs, tableData, groupMapping } = groupData
 
     // Group providers by category
     const telkomProviders = ["IndiHome", "Indibiz", "Wifi.id", "Astinet"]
@@ -961,28 +947,6 @@ const FeedbackDistributionChart = ({ data, title }: ChartProps) => {
   )
 }
 
-interface StatCardProps {
-  title: string
-  value: number
-  icon: React.ComponentType<{ size?: number }>
-  color?: string
-  bgColor?: string
-}
-
-const StatCard = ({ title, value, icon: Icon, color = "text-blue-600", bgColor = "bg-blue-50" }: StatCardProps) => (
-  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
-    <div className="flex items-center">
-      <div className={`p-4 rounded-xl ${bgColor} ${color}`}>
-        <Icon size={28} />
-      </div>
-      <div className="ml-4">
-        <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{title}</p>
-        <p className="text-3xl font-bold text-gray-900 mt-1">{value.toLocaleString()}</p>
-      </div>
-    </div>
-  </div>
-)
-
 const VisualisasiData = () => {
   const navigate = useNavigate()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -990,11 +954,10 @@ const VisualisasiData = () => {
   const [data, setData] = useState<VisitDataItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [connectionStatus, setConnectionStatus] = useState<"checking" | "connected" | "disconnected">("checking")
+  const [, setConnectionStatus] = useState<"checking" | "connected" | "disconnected">("checking")
 
-  // State untuk tracking last refresh
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
-  const [serverMeta, setServerMeta] = useState<any>(null)
+  const [, setServerMeta] = useState<any>(null)
 
   // Date filter states
   const [startDate, setStartDate] = useState("")
@@ -1013,10 +976,8 @@ const VisualisasiData = () => {
   // Test backend connection
   const testConnection = async () => {
     try {
-      console.log("🔍 Testing backend connection...")
       setConnectionStatus("checking")
 
-      // Add cache busting parameter
       const response = await fetch(`http://localhost:5000/api/health?t=${Date.now()}`, {
         method: "GET",
         headers: {
@@ -1028,22 +989,22 @@ const VisualisasiData = () => {
 
       if (response.ok) {
         const healthData = await response.json()
-        console.log("✅ Backend connection successful:", healthData)
+        console.log("Backend connection successful:", healthData)
         setConnectionStatus("connected")
         return true
       } else {
-        console.log("❌ Backend responded with error:", response.status, response.statusText)
+        console.log("Backend responded with error:", response.status, response.statusText)
         setConnectionStatus("disconnected")
         return false
       }
     } catch (error) {
-      console.log("❌ Backend connection failed:", error)
+      console.log("Backend connection failed:", error)
       setConnectionStatus("disconnected")
       return false
     }
   }
 
-  // Initialize date range (last 30 days)
+  // date range (last 30 days)
   useEffect(() => {
     const today = new Date()
     const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
@@ -1073,15 +1034,12 @@ const VisualisasiData = () => {
     try {
       setLoading(true)
       setError(null)
-      console.log("📊 Fetching data from database via backend API...")
 
-      // First test connection
       const isConnected = await testConnection()
       if (!isConnected) {
         throw new Error("Backend server tidak dapat diakses. Pastikan server berjalan di http://localhost:5000")
       }
 
-      // Add cache busting and force fresh request
       const response = await fetch(`http://localhost:5000/api/visit-data?t=${Date.now()}`, {
         method: "GET",
         headers: {
@@ -1092,8 +1050,8 @@ const VisualisasiData = () => {
         },
       })
 
-      console.log("📡 Response status:", response.status)
-      console.log("📡 Response headers:", Object.fromEntries(response.headers.entries()))
+      console.log("Response status:", response.status)
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()))
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -1107,7 +1065,6 @@ const VisualisasiData = () => {
 
       const result = await response.json()
 
-      // Handle new response format with meta
       let actualData = result
       let meta = null
 
@@ -1115,20 +1072,7 @@ const VisualisasiData = () => {
         actualData = result.data
         meta = result.meta
         setServerMeta(meta)
-        console.log("📊 Server meta:", meta)
       }
-
-      console.log("✅ Database data received:", actualData.length, "records")
-
-      // Debug: tampilkan data terbaru untuk memastikan sinkronisasi
-      console.log("🔍 Latest 3 records from database:")
-      actualData.slice(0, 3).forEach((record: VisitDataItem, index: number) => {
-        console.log(`   ${index + 1}. ID: ${record._id}, Timestamp: ${record.timestamp}, POI: ${record.poi_name}`)
-      })
-
-      // Debug: tampilkan total unik berdasarkan ID
-      const uniqueIds = new Set(actualData.map((item: VisitDataItem) => item._id))
-      console.log("📊 Unique records by ID:", uniqueIds.size)
 
       if (!Array.isArray(actualData)) {
         throw new Error("Data yang diterima bukan array. Format data tidak sesuai.")
@@ -1140,7 +1084,7 @@ const VisualisasiData = () => {
     } catch (err: any) {
       const errorMessage = err.message || "Terjadi kesalahan saat mengambil data dari database"
       setError(errorMessage)
-      console.error("❌ Error fetching database data:", err)
+      console.error("Error fetching database data:", err)
       setConnectionStatus("disconnected")
     } finally {
       setLoading(false)
@@ -1151,7 +1095,6 @@ const VisualisasiData = () => {
     fetchData()
   }, [])
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -1174,11 +1117,7 @@ const VisualisasiData = () => {
     end.setHours(23, 59, 9999)
     return itemDate >= start && itemDate <= end
   })
-
-  // Process data for visualizations
   const processDataForCharts = () => {
-    console.log("🔄 Processing database data for charts...")
-    console.log("📊 Filtered data count:", filteredData.length)
 
     // 1. Kunjungan per Ekosistem
     const ekosistemData = filteredData.reduce((acc: { [key: string]: number }, item) => {
@@ -1208,7 +1147,7 @@ const VisualisasiData = () => {
       }))
       .sort((a, b) => b.value - a.value)
 
-    // 3. Provider yang Digunakan - ENHANCED PROCESSING
+    // 3. Provider yang Digunakan
     const providerData = filteredData.reduce((acc: { [key: string]: number }, item) => {
       let provider = item.provider || item.provider_detail || item.detailProvider || ""
 
@@ -1230,9 +1169,8 @@ const VisualisasiData = () => {
         return acc
       }
 
-      // Enhanced provider mapping with fixed typo
       const providerMapping: { [key: string]: string } = {
-        // Telkom Group variations
+        // Telkom Group 
         indihome: "IndiHome",
         "indi home": "IndiHome",
         "telkom indihome": "IndiHome",
@@ -1246,7 +1184,7 @@ const VisualisasiData = () => {
         "telkom astinet": "Astinet",
         telkom: "Telkom",
 
-        // Kompetitor variations (fixed typo)
+        // Kompetitor
         myrep: "MyRepublic",
         "my rep": "MyRepublic",
         "my-rep": "MyRepublic",
@@ -1258,7 +1196,7 @@ const VisualisasiData = () => {
         firstmedia: "First Media",
         "first media": "First Media",
         "first-media": "First Media",
-        firtsmedia: "First Media", // Handle typo in original data
+        firtsmedia: "First Media", 
         iconnet: "Iconnet",
         "icon net": "Iconnet",
         "icon+": "Iconnet",
@@ -1302,9 +1240,6 @@ const VisualisasiData = () => {
     const providerChart = Object.entries(providerData)
       .map(([name, value]) => ({ name, value: value as number }))
       .sort((a, b) => b.value - a.value)
-
-    // Debug log untuk melihat hasil akhir
-    console.log("📊 Final provider data:", providerChart)
 
     // 4. Stats
     const totalKunjungan = filteredData.length
@@ -1594,7 +1529,7 @@ const VisualisasiData = () => {
 
               {/* Charts Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {/* Kunjungan per Ekosistem - Enhanced Horizontal Bar Chart */}
+                {/* Kunjungan per Ekosistem Horizontal Bar Chart */}
                 <EnhancedHorizontalBarChart
                   data={chartData.ekosistemChart.slice(0, 10)}
                   title="Kunjungan per Ekosistem"
@@ -1616,14 +1551,14 @@ const VisualisasiData = () => {
                 <FeedbackDistributionChart data={chartData.feedbackChart} title="Distribusi Feedback" />
               </div>
 
-              {/* Provider Analysis - Separated Bar Chart and Tables */}
+              {/* Provider Analysis */}
               <div className="space-y-8">
-                {/* Provider Bar Chart - Compact */}
+                {/* Provider Bar Chart */}
                 <div className="max-w-screen mx-auto">
                   <ProviderBarChart data={chartData.providerChart} title="Analisis Provider Kompetitor" />
                 </div>
 
-                {/* Provider Tables - Full Width Below */}
+                {/* Provider Tables */}
                 <div className="w-full">
                   <ProviderTables data={chartData.providerChart} rawData={filteredData} />
                 </div>

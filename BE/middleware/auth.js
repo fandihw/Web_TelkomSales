@@ -4,25 +4,25 @@ const User = require("../models/User")
 async function authenticateToken(req, res, next) {
   try {
     const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(" ")[1] // Bearer TOKEN
+    const token = authHeader && authHeader.split(" ")[1]
 
-    console.log("🔑 Token authentication:")
-    console.log("   Auth header:", authHeader ? "EXISTS" : "MISSING")
-    console.log("   Token:", token ? "EXISTS" : "MISSING")
+    console.log("Token authentication:")
+    console.log("Auth header:", authHeader ? "EXISTS" : "MISSING")
+    console.log("Token:", token ? "EXISTS" : "MISSING")
 
     if (!token) {
-      console.log("❌ No token provided")
+      console.log("No token provided")
       return res.status(401).json({ message: "Access token required" })
     }
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret_key")
-    console.log("✅ Token decoded:", { id: decoded.id, role: decoded.role })
+    console.log("Token decoded:", { id: decoded.id, role: decoded.role })
 
     // Get user from database to ensure user still exists
     const user = await User.findById(decoded.id)
     if (!user) {
-      console.log("❌ User not found in database")
+      console.log("User not found in database")
       return res.status(401).json({ message: "User not found" })
     }
 
@@ -34,10 +34,10 @@ async function authenticateToken(req, res, next) {
       name: user.name,
     }
 
-    console.log("✅ User authenticated:", req.user.email)
+    console.log("User authenticated:", req.user.email)
     next()
   } catch (error) {
-    console.log("❌ Token verification failed:", error.message)
+    console.log("Token verification failed:", error.message)
 
     if (error.name === "TokenExpiredError") {
       return res.status(401).json({ message: "Token expired" })

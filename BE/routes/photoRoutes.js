@@ -3,21 +3,21 @@ const router = express.Router()
 const path = require("path")
 const fs = require("fs")
 
-// Route untuk serve foto dari folder bot
+// Route untuk serve foto dari folder
 router.get("/photo/:filename", (req, res) => {
   try {
     const { filename } = req.params
 
-    // Path ke folder photos di project bot (sesuaikan dengan lokasi bot Anda)
+    // Path ke folder photos
     const botPhotosPath = "D:\\111111KP\\TUGAS_MAGANG\\SalesTeleBot_Mongo\\photos" // Path absolut ke folder photos
     const filePath = path.join(botPhotosPath, filename)
 
-    console.log("📸 Requesting photo:", filename)
-    console.log("📁 Photo path:", filePath)
+    console.log("Requesting photo:", filename)
+    console.log("Photo path:", filePath)
 
     // Check if file exists
     if (!fs.existsSync(filePath)) {
-      console.log("❌ Photo not found:", filePath)
+      console.log("Photo not found:", filePath)
       return res.status(404).json({ message: "Photo not found" })
     }
 
@@ -26,7 +26,7 @@ router.get("/photo/:filename", (req, res) => {
     const fileExtension = path.extname(filename).toLowerCase()
 
     if (!allowedExtensions.includes(fileExtension)) {
-      console.log("❌ Invalid file type:", fileExtension)
+      console.log("Invalid file type:", fileExtension)
       return res.status(400).json({ message: "Invalid file type" })
     }
 
@@ -40,15 +40,14 @@ router.get("/photo/:filename", (req, res) => {
       }[fileExtension] || "image/jpeg"
 
     res.setHeader("Content-Type", contentType)
-    res.setHeader("Cache-Control", "public, max-age=86400") // Cache for 1 day
+    res.setHeader("Cache-Control", "public, max-age=86400")
 
-    // Stream the file
     const fileStream = fs.createReadStream(filePath)
     fileStream.pipe(res)
 
-    console.log("✅ Photo served successfully:", filename)
+    console.log("Photo served successfully:", filename)
   } catch (error) {
-    console.error("❌ Error serving photo:", error)
+    console.error("Error serving photo:", error)
     res.status(500).json({ message: "Error serving photo", error: error.message })
   }
 })
@@ -58,18 +57,17 @@ router.get("/photos/:telegram_id", (req, res) => {
   try {
     const { telegram_id } = req.params
 
-    // Path ke folder photos di project bot
+    // Path ke folder photos
     const botPhotosPath = "D:\\111111KP\\TUGAS_MAGANG\\SalesTeleBot_Mongo\\photos"
 
-    console.log("📸 Listing photos for telegram_id:", telegram_id)
-    console.log("📁 Photos directory:", botPhotosPath)
+    console.log("Listing photos for telegram_id:", telegram_id)
+    console.log("Photos directory:", botPhotosPath)
 
     if (!fs.existsSync(botPhotosPath)) {
-      console.log("❌ Photos directory not found:", botPhotosPath)
+      console.log("Photos directory not found:", botPhotosPath)
       return res.status(404).json({ message: "Photos directory not found" })
     }
 
-    // Read directory and filter files by telegram_id
     const files = fs.readdirSync(botPhotosPath)
     const userPhotos = files.filter((file) => {
       return (
@@ -78,9 +76,8 @@ router.get("/photos/:telegram_id", (req, res) => {
       )
     })
 
-    console.log("✅ Found photos:", userPhotos.length)
+    console.log("Found photos:", userPhotos.length)
 
-    // Return array of photo URLs
     const photoUrls = userPhotos.map((filename) => ({
       filename,
       url: `/api/photo/${filename}`,
@@ -93,7 +90,7 @@ router.get("/photos/:telegram_id", (req, res) => {
       count: photoUrls.length,
     })
   } catch (error) {
-    console.error("❌ Error listing photos:", error)
+    console.error("Error listing photos:", error)
     res.status(500).json({ message: "Error listing photos", error: error.message })
   }
 })
@@ -103,31 +100,29 @@ router.post("/photo-match", (req, res) => {
   try {
     const { telegram_id, poi_name, timestamp, photo_filename } = req.body
 
-    // Path ke folder photos di project bot
+    // Path ke folder photos
     const botPhotosPath = "D:\\111111KP\\TUGAS_MAGANG\\SalesTeleBot_Mongo\\photos"
 
-    console.log("🔍 Advanced photo matching:")
-    console.log("   Telegram ID:", telegram_id)
-    console.log("   POI Name:", poi_name)
-    console.log("   Timestamp:", timestamp)
-    console.log("   Photo filename:", photo_filename)
+    console.log("Advanced photo matching:")
+    console.log("Telegram ID:", telegram_id)
+    console.log("POI Name:", poi_name)
+    console.log("Timestamp:", timestamp)
+    console.log("Photo filename:", photo_filename)
 
     if (!fs.existsSync(botPhotosPath)) {
-      console.log("❌ Photos directory not found:", botPhotosPath)
+      console.log("Photos directory not found:", botPhotosPath)
       return res.status(404).json({ message: "Photos directory not found" })
     }
 
-    // Read directory
     const files = fs.readdirSync(botPhotosPath)
     const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif"]
 
-    // Filter files by telegram_id first
     const userFiles = files.filter((file) => {
       const fileExtension = path.extname(file).toLowerCase()
       return allowedExtensions.includes(fileExtension) && file.startsWith(`${telegram_id}_`)
     })
 
-    console.log("📁 User files found:", userFiles.length)
+    console.log("User files found:", userFiles.length)
 
     if (userFiles.length === 0) {
       return res.status(404).json({
@@ -140,18 +135,16 @@ router.post("/photo-match", (req, res) => {
     let matchedFile = null
     let matchReason = ""
 
-    // 1. Coba exact match dengan photo_filename
     if (photo_filename && photo_filename !== "-") {
-      const cleanFilename = photo_filename.split(/[/\\]/).pop() // Remove path if any
+      const cleanFilename = photo_filename.split(/[/\\]/).pop()
       matchedFile = userFiles.find((file) => file === cleanFilename)
       if (matchedFile) {
         matchReason = "exact_filename_match"
       }
     }
 
-    // 2. Jika tidak ada exact match, coba partial match dengan filename
     if (!matchedFile && photo_filename && photo_filename !== "-") {
-      const cleanFilename = photo_filename.replace(/\.[^/.]+$/, "") // Remove extension
+      const cleanFilename = photo_filename.replace(/\.[^/.]+$/, "") 
       matchedFile = userFiles.find(
         (file) => file.includes(cleanFilename) || cleanFilename.includes(file.replace(/\.[^/.]+$/, "")),
       )
@@ -160,10 +153,9 @@ router.post("/photo-match", (req, res) => {
       }
     }
 
-    // 3. Jika masih tidak ada, coba match berdasarkan timestamp (jika tersedia)
     if (!matchedFile && timestamp) {
       const targetDate = new Date(timestamp)
-      const targetDateStr = targetDate.toISOString().split("T")[0].replace(/-/g, "") // YYYYMMDD format
+      const targetDateStr = targetDate.toISOString().split("T")[0].replace(/-/g, "") 
 
       matchedFile = userFiles.find((file) => file.includes(targetDateStr))
       if (matchedFile) {
@@ -171,7 +163,6 @@ router.post("/photo-match", (req, res) => {
       }
     }
 
-    // 4. Jika masih tidak ada, coba match berdasarkan POI name (jika ada dalam filename)
     if (!matchedFile && poi_name && poi_name !== "-") {
       const cleanPOI = poi_name.toLowerCase().replace(/[^a-z0-9]/g, "")
       matchedFile = userFiles.find((file) => {
@@ -183,7 +174,6 @@ router.post("/photo-match", (req, res) => {
       }
     }
 
-    // 5. Jika masih tidak ada match, ambil file terbaru berdasarkan modification time
     if (!matchedFile) {
       const filesWithStats = userFiles.map((file) => {
         const filePath = path.join(botPhotosPath, file)
@@ -205,7 +195,7 @@ router.post("/photo-match", (req, res) => {
       })
     }
 
-    console.log("✅ Photo matched:", matchedFile, "Reason:", matchReason)
+    console.log("Photo matched:", matchedFile, "Reason:", matchReason)
 
     res.json({
       filename: matchedFile,
@@ -215,7 +205,7 @@ router.post("/photo-match", (req, res) => {
       searchCriteria: { telegram_id, poi_name, timestamp, photo_filename },
     })
   } catch (error) {
-    console.error("❌ Error matching photo:", error)
+    console.error("Error matching photo:", error)
     res.status(500).json({ message: "Error matching photo", error: error.message })
   }
 })
@@ -225,7 +215,7 @@ router.get("/debug/list-all-photos", (req, res) => {
   try {
     const botPhotosPath = "D:\\111111KP\\TUGAS_MAGANG\\SalesTeleBot_Mongo\\photos"
 
-    console.log("🔧 Debug: Listing all files in photos directory")
+    console.log("Debug: Listing all files in photos directory")
 
     if (!fs.existsSync(botPhotosPath)) {
       return res.status(404).json({ message: "Photos directory not found", path: botPhotosPath })
@@ -262,7 +252,7 @@ router.get("/debug/list-all-photos", (req, res) => {
       })),
     })
   } catch (error) {
-    console.error("❌ Error listing all photos:", error)
+    console.error("Error listing all photos:", error)
     res.status(500).json({ message: "Error listing photos", error: error.message })
   }
 })

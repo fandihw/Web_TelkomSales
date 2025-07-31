@@ -14,8 +14,6 @@ import {
   X,
   ImageIcon,
   Loader2,
-  AlertCircle,
-  Info,
   UserSearch,
   UserPlus2Icon,
 } from "lucide-react"
@@ -23,16 +21,12 @@ import { useNavigate } from "react-router-dom"
 
 const DashboardAdmin = () => {
   const navigate = useNavigate()
-
-  // Debug logging
-  console.log("🔧 DashboardAdmin component rendered")
-
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
 
-  // Filter states
+  // Filter
   const [filterEkosistem, setFilterEkosistem] = useState("")
   const [filterTelda, setFilterTelda] = useState("")
   const [filterSTO, setFilterSTO] = useState("")
@@ -50,28 +44,19 @@ const DashboardAdmin = () => {
     role: "Administrator",
   })
 
-  // State untuk data management - ENSURE ARRAY
+  // meneroma data
   const [data, setData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Debug current state
-  console.log("🔧 Current state:", {
-    dataLength: data.length,
-    dataType: Array.isArray(data) ? "array" : typeof data,
-    loading,
-    error,
-  })
-
-  // State untuk photo modal
+  // foto
   const [selectedItem, setSelectedItem] = useState<any>(null)
   const [showPhotoModal, setShowPhotoModal] = useState(false)
   const [photos, setPhotos] = useState<any[]>([])
   const [loadingPhotos, setLoadingPhotos] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
-  const [matchInfo, setMatchInfo] = useState<any>(null)
+  const [, setMatchInfo] = useState<any>(null)
 
-  // Check authorization - HANYA SEKALI saat component mount
   useEffect(() => {
     const userStr = localStorage.getItem("user")
     const role = localStorage.getItem("role")
@@ -87,7 +72,7 @@ const DashboardAdmin = () => {
         console.error("Error parsing user data:", e)
       }
     }
-  }, []) // KOSONG dependency array - hanya run sekali
+  }, [])
 
   // Filter options
   const ekosistemOptions = [
@@ -115,13 +100,13 @@ const DashboardAdmin = () => {
     Kanjeran: ["KPS", "PRK", "KBL", "KJR"],
   }
 
-  // Fetch data dari API - DENGAN useCallback untuk mencegah re-creation
+  // Fetch data dari API
   const fetchData = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      console.log("📊 Fetching data from API...")
+      console.log("Fetching data from API...")
 
       const response = await fetch("http://localhost:5000/api/visit-data", {
         method: "GET",
@@ -131,36 +116,30 @@ const DashboardAdmin = () => {
         },
       })
 
-      console.log("📡 Response status:", response.status)
+      console.log("Response status:", response.status)
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
-
       const result = await response.json()
-      console.log("✅ Raw response:", result)
-
-      // Handle different response formats
+      console.log("Raw response:", result)
       let actualData = result
       if (result.data && Array.isArray(result.data)) {
         actualData = result.data
       } else if (result.meta && result.data) {
         actualData = result.data
       }
-
-      // Ensure data is always an array
       if (!Array.isArray(actualData)) {
-        console.warn("⚠️ Data is not an array, converting:", actualData)
+        console.warn("Data is not an array, converting:", actualData)
         actualData = []
       }
 
-      console.log("✅ Data processed:", actualData.length, "records")
+      console.log("Data processed:", actualData.length, "records")
       setData(actualData)
     } catch (err: any) {
       const errorMessage = err.message || "Terjadi kesalahan saat mengambil data"
       setError(errorMessage)
-      console.error("❌ Error fetching data:", err)
-      // Set empty array on error to prevent filter issues
+      console.error("Error fetching data:", err)
       setData([])
     } finally {
       setLoading(false)
@@ -179,7 +158,7 @@ const DashboardAdmin = () => {
       const timestamp = item.timestamp
       const photoFilename = item.photo_url || item.eviden
 
-      console.log("🔍 Advanced photo matching for item:", {
+      console.log("Advanced photo matching for item:", {
         telegramId,
         poiName,
         timestamp,
@@ -190,7 +169,7 @@ const DashboardAdmin = () => {
         throw new Error("Telegram ID tidak tersedia untuk pencarian foto")
       }
 
-      // endpoint photo-match yang baru
+      // endpoint photo
       const response = await fetch("http://localhost:5000/api/photo-match", {
         method: "POST",
         headers: {
@@ -206,9 +185,7 @@ const DashboardAdmin = () => {
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.log("❌ Photo match failed:", errorData)
-
-        // Jika tidak ada foto yang cocok, tampilkan info debug
+        console.log("Photo match failed:", errorData)
         setMatchInfo({
           searchCriteria: errorData.searchCriteria,
           availableFiles: errorData.availableFiles,
@@ -219,7 +196,7 @@ const DashboardAdmin = () => {
       }
 
       const result = await response.json()
-      console.log("✅ Photo matched successfully:", result)
+      console.log("Photo matched successfully:", result)
 
       setPhotos([result])
       setMatchInfo({
@@ -230,19 +207,17 @@ const DashboardAdmin = () => {
     } catch (err: any) {
       const errorMessage = err.message || "Terjadi kesalahan saat mengambil foto"
       setPhotoError(errorMessage)
-      console.error("❌ Error fetching photo:", err)
+      console.error("Error fetching photo:", err)
       setPhotos([])
     } finally {
       setLoadingPhotos(false)
     }
   }
 
-  // useEffect untuk fetch data saat komponen dimount - HANYA SEKALI
   useEffect(() => {
     fetchData()
-  }, []) // KOSONG dependency array - hanya run sekali saat mount
+  }, [])
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -268,7 +243,7 @@ const DashboardAdmin = () => {
     navigate("/login")
   }
 
-  // Navigate to register page
+  // Navigate ke register page
   const handleRegisterClick = () => {
     const role = localStorage.getItem("role")
     if (role === "superadmin") {
@@ -278,7 +253,7 @@ const DashboardAdmin = () => {
     }
   }
 
-  // Navigate to visualisasi data
+  // Navigate ke visualisasi data
   const handleVisualisasiClick = () => {
     navigate("/visualisasi-data")
   }
@@ -290,7 +265,7 @@ const DashboardAdmin = () => {
     await fetchSpecificPhoto(item)
   }
 
-  // Apply filters - with safety check
+  // Apply filters
   const filteredData = Array.isArray(data)
     ? data.filter((item) => {
         const matchesSearch = Object.values(item || {}).some((value) =>
@@ -310,14 +285,14 @@ const DashboardAdmin = () => {
   const endIndex = startIndex + itemsPerPage
   const currentData = filteredData.slice(startIndex, endIndex)
 
-  // Export Data Function
+  // Export Data
   const handleExportData = () => {
     if (filteredData.length === 0) {
       alert("Tidak ada data untuk diexport")
       return
     }
 
-    // Define column headers
+    // header kolom
     const headers = [
       "ID",
       "Tanggal",
@@ -342,9 +317,9 @@ const DashboardAdmin = () => {
       "Eviden",
     ]
 
-    // Convert data to CSV format
+    // Convert to CSV format
     const csvContent = [
-      headers.join(","), // Header row
+      headers.join(","),
       ...filteredData.map((item) =>
         [
           item.id || item._id || "",
@@ -372,7 +347,6 @@ const DashboardAdmin = () => {
       ),
     ].join("\n")
 
-    // Create and download file
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const link = document.createElement("a")
 
@@ -380,11 +354,9 @@ const DashboardAdmin = () => {
       const url = URL.createObjectURL(blob)
       link.setAttribute("href", url)
 
-      // Generate filename with current date and applied filters
       const currentDate = new Date().toISOString().split("T")[0]
       let filename = `data-sales-${currentDate}`
 
-      // Add filter info to filename
       if (filterEkosistem) filename += `-${filterEkosistem}`
       if (filterTelda) filename += `-${filterTelda}`
       if (filterSTO) filename += `-${filterSTO}`
@@ -395,7 +367,6 @@ const DashboardAdmin = () => {
       link.click()
       document.body.removeChild(link)
 
-      // Show success message
       alert(`Data berhasil diexport! ${filteredData.length} record telah diunduh.`)
     }
   }
@@ -407,7 +378,7 @@ const DashboardAdmin = () => {
   // Handle filter changes
   const handleTeldaChange = (telda: string) => {
     setFilterTelda(telda)
-    setFilterSTO("") // Reset STO when Telda changes
+    setFilterSTO("")
     setShowTeldaDropdown(false)
   }
 
@@ -440,7 +411,7 @@ const DashboardAdmin = () => {
     return badges[ekosistem] || "bg-gray-100 text-gray-800"
   }
 
-  const getMatchReasonText = (reason: string) => {
+ /* const getMatchReasonText = (reason: string) => {
     const reasons: Record<string, string> = {
       exact_filename_match: "Exact filename match",
       partial_filename_match: "Partial filename match",
@@ -449,7 +420,7 @@ const DashboardAdmin = () => {
       latest_file_fallback: "Latest file (fallback)",
     }
     return reasons[reason] || reason
-  }
+  } */
 
   const activeFiltersCount = [filterEkosistem, filterTelda, filterSTO].filter(Boolean).length
 
@@ -510,7 +481,7 @@ const DashboardAdmin = () => {
           </button>
         </nav>
 
-        {/* User Info with Dropdown */}
+        {/* User Info Dropdown */}
         <div className="p-4 border-t border-gray-200 relative" ref={dropdownRef}>
           <div className={`${sidebarCollapsed ? "hidden" : "block"}`}>
             <button
@@ -548,7 +519,7 @@ const DashboardAdmin = () => {
             )}
           </div>
 
-          {/* Collapsed state - just show logout icon */}
+          {/* logout icon */}
           {sidebarCollapsed && (
             <button
               onClick={handleLogout}
@@ -611,7 +582,6 @@ const DashboardAdmin = () => {
             </div>
           )}
 
-          {/* Show content only when not loading and no error */}
           {!loading && !error && (
             <>
               {/* Search and Filter Bar */}
@@ -1046,7 +1016,7 @@ const DashboardAdmin = () => {
           )}
         </main>
 
-        {/* Photo Modal - bagian yang diubah */}
+        {/* Photo Modal */}
         {showPhotoModal && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden"> {/* Ubah dari max-w-4xl ke max-w-2xl */}
@@ -1112,33 +1082,33 @@ const DashboardAdmin = () => {
                 </div>
               </div>
 
-              {/* Loading State - tetap sama */}
+              {/* Loading State */}
               {loadingPhotos && (
-                <div className="flex items-center justify-center py-12"> {/* Kurangi padding dari py-16 ke py-12 */}
+                <div className="flex items-center justify-center py-12">
                   <div className="flex flex-col items-center">
-                    <Loader2 className="animate-spin text-red-600 mb-2" size={24} /> {/* Kurangi size dari 32 ke 24 */}
-                    <span className="text-gray-600 text-sm">Memuat foto...</span> {/* Tambah text-sm */}
+                    <Loader2 className="animate-spin text-red-600 mb-2" size={24} />
+                    <span className="text-gray-600 text-sm">Memuat foto...</span> 
                   </div>
                 </div>
               )}
 
-              {/* Photo Display - ukuran foto diperkecil */}
+              {/* Photo Display */}
               {!loadingPhotos && !photoError && photos.length > 0 && (
-                <div className="px-6 py-4"> {/* Kurangi padding dari py-6 ke py-4 */}
-                  <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-200 shadow-inner"> {/* Ubah dari rounded-xl ke rounded-lg */}
+                <div className="px-6 py-4">
+                  <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-200 shadow-inner">
                     <img
                       src={photos[0].fullUrl || "/placeholder.svg"}
                       alt={`Foto kunjungan`}
-                      className="w-full object-contain max-h-[300px]" // Kurangi dari max-h-[500px] ke max-h-[300px]
+                      className="w-full object-contain max-h-[300px]" 
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
-                        target.src = "/placeholder.svg?height=300&width=400&text=Foto tidak dapat dimuat" // Sesuaikan placeholder size
+                        target.src = "/placeholder.svg?height=300&width=400&text=Foto tidak dapat dimuat" 
                       }}
                     />
                   </div>
 
-                  {/* Filename - lebih compact */}
-                  <div className="mt-2 text-center"> {/* Kurangi margin dari mt-3 ke mt-2 */}
+                  {/* Filename */}
+                  <div className="mt-2 text-center">
                     <p className="text-xs text-gray-500 bg-gray-50 py-1 px-2 rounded-md inline-block">
                       {photos[0].filename}
                     </p>
@@ -1146,19 +1116,19 @@ const DashboardAdmin = () => {
                 </div>
               )}
 
-              {/* No Photos - lebih compact */}
+              {/* No Photos */}
               {!loadingPhotos && !photoError && photos.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-12"> {/* Kurangi dari py-16 ke py-12 */}
-                  <div className="bg-gray-50 rounded-full p-3 mb-3"> {/* Kurangi padding dan margin */}
-                    <ImageIcon className="text-gray-400" size={24} /> {/* Kurangi dari 32 ke 24 */}
+                <div className="flex flex-col items-center justify-center py-12"> 
+                  <div className="bg-gray-50 rounded-full p-3 mb-3"> 
+                    <ImageIcon className="text-gray-400" size={24} />
                   </div>
-                  <p className="text-gray-700 font-medium text-sm">Tidak ada foto tersedia</p> {/* Tambah text-sm */}
-                  <p className="text-xs text-gray-500 mt-1">Tidak ditemukan foto untuk kunjungan ini</p> {/* Ubah ke text-xs */}
+                  <p className="text-gray-700 font-medium text-sm">Tidak ada foto tersedia</p> 
+                  <p className="text-xs text-gray-500 mt-1">Tidak ditemukan foto untuk kunjungan ini</p> 
                 </div>
               )}
 
-              {/* Footer - tetap sama tapi bisa diperkecil */}
-              <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-end"> {/* Kurangi padding dari py-4 ke py-3 */}
+              {/* Footer */}
+              <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-end"> 
                 <button
                   onClick={() => setShowPhotoModal(false)}
                   className="px-4 py-2 text-sm text-red-700 bg-white border border-red-700 rounded-md hover:bg-red-100 transition-colors"

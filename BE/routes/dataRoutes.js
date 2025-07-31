@@ -17,8 +17,8 @@ router.get("/data/my-data", authenticateToken, async (req, res) => {
     }
 
     if (!user.telegram_id) {
-      console.log("⚠️ User tidak memiliki telegram_id")
-      return res.json([]) // Return empty array jika tidak ada telegram_id
+      console.log("User tidak memiliki telegram_id")
+      return res.json([]) 
     }
 
     // Cari data berdasarkan telegram_id atau user_id yang match dengan telegram_id
@@ -26,11 +26,11 @@ router.get("/data/my-data", authenticateToken, async (req, res) => {
       $or: [{ telegram_id: user.telegram_id }, { user_id: user.telegram_id }],
     }).sort({ timestamp: -1 })
 
-    console.log("✅ User data fetched:", data.length, "records for telegram_id:", user.telegram_id)
+    console.log("User data fetched:", data.length, "records for telegram_id:", user.telegram_id)
 
     res.json(data)
   } catch (err) {
-    console.error("❌ Error fetching user data:", err)
+    console.error("Error fetching user data:", err)
     res.status(500).json({
       message: "Error fetching user data",
       error: err.message,
@@ -41,7 +41,7 @@ router.get("/data/my-data", authenticateToken, async (req, res) => {
 // GET semua data untuk admin/superadmin
 router.get("/data/all-data", authenticateToken, async (req, res) => {
   try {
-    console.log("📊 Fetching all data by admin:", req.user.id)
+    console.log("Fetching all data by admin:", req.user.id)
 
     // Cek apakah user adalah admin atau superadmin
     if (req.user.role !== "admin" && req.user.role !== "superadmin") {
@@ -50,11 +50,11 @@ router.get("/data/all-data", authenticateToken, async (req, res) => {
 
     const data = await VisitData.find().sort({ timestamp: -1 })
 
-    console.log("✅ All data fetched:", data.length, "records")
+    console.log("All data fetched:", data.length, "records")
 
     res.json(data)
   } catch (err) {
-    console.error("❌ Error fetching all data:", err)
+    console.error("Error fetching all data:", err)
     res.status(500).json({
       message: "Error fetching all data",
       error: err.message,
