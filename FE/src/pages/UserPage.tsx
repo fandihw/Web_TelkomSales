@@ -261,7 +261,7 @@ const UsersPage = () => {
         className={`${sidebarCollapsed ? "w-16" : "w-64"} bg-white shadow-lg transition-all duration-300 flex flex-col`}
       >
         {/* Logo Section */}
-                <div className="p-4  border-gray-200">
+        <div className="p-4  border-gray-200">
           <div className="flex items-center justify-between">
             <div className={`${sidebarCollapsed ? "hidden" : "block"}`}>
               <img
@@ -578,7 +578,7 @@ const UsersPage = () => {
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                               <button
                                 onClick={() => handleDeleteClick(user)}
-                                className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                                className="text-red-700 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
                                 title="Hapus User"
                               >
                                 <Trash size={16} />
@@ -658,22 +658,22 @@ const UsersPage = () => {
               <div className="p-6">
                 <div className="flex items-center mb-4">
                   <div className="flex-shrink-0">
-                    <AlertTriangle className="h-6 w-6 text-red-600" />
+                    <AlertTriangle className="h-6 w-6 text-red-700" />
                   </div>
                   <div className="ml-3">
                     <h3 className="text-lg font-medium text-gray-900">Konfirmasi Hapus User</h3>
                   </div>
                 </div>
                 <div className="mb-4">
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-black">
                     Apakah Anda yakin ingin menghapus user berikut?
                   </p>
                   <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm font-medium text-gray-900">Nama: {userToDelete.name}</p>
-                    <p className="text-sm text-gray-600">Email: {userToDelete.email}</p>
-                    <p className="text-sm text-gray-600">Role: {getRoleLabel(userToDelete.role)}</p>
+                    <p className="text-sm text-gray-800">Email: {userToDelete.email}</p>
+                    <p className="text-sm text-gray-800">Role: {getRoleLabel(userToDelete.role)}</p>
                   </div>
-                  <p className="text-sm text-red-600 mt-2">
+                  <p className="text-sm text-red-700 mt-2">
                     <strong>Peringatan:</strong> Tindakan ini tidak dapat dibatalkan!
                   </p>
                 </div>
@@ -681,14 +681,14 @@ const UsersPage = () => {
                   <button
                     onClick={handleDeleteCancel}
                     disabled={deleting}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition-colors disabled:opacity-50"
                   >
                     Batal
                   </button>
                   <button
                     onClick={handleDeleteConfirm}
                     disabled={deleting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-700 border border-transparent rounded-md hover:bg-red-800 transition-colors disabled:opacity-50"
                   >
                     {deleting ? (
                       <div className="flex items-center">

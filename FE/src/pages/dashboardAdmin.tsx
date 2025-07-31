@@ -167,7 +167,7 @@ const DashboardAdmin = () => {
     }
   }
 
-  // Fungsi untuk mencari foto dengan algoritma matching yang lebih baik
+  // Fungsi untuk mencari foto
   const fetchSpecificPhoto = async (item: any) => {
     try {
       setLoadingPhotos(true)
@@ -190,7 +190,7 @@ const DashboardAdmin = () => {
         throw new Error("Telegram ID tidak tersedia untuk pencarian foto")
       }
 
-      // Gunakan endpoint photo-match yang baru
+      // endpoint photo-match yang baru
       const response = await fetch("http://localhost:5000/api/photo-match", {
         method: "POST",
         headers: {
@@ -1046,10 +1046,10 @@ const DashboardAdmin = () => {
           )}
         </main>
 
-        {/* Photo Modal */}
+        {/* Photo Modal - bagian yang diubah */}
         {showPhotoModal && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full overflow-hidden">
+            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden"> {/* Ubah dari max-w-4xl ke max-w-2xl */}
               {/* Header */}
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center">
@@ -1066,126 +1066,79 @@ const DashboardAdmin = () => {
 
               {/* Item Info */}
               <div className="px-6 py-4 bg-white border-b border-gray-100">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Nama Sales:</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                <div className="space-y-3">
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Nama Sales:</span>
+                    <span className="text-sm text-gray-900">
                       {selectedItem?.nama_sales || selectedItem?.namaSales || "-"}
-                    </p>
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Telegram ID:</p>
-                    <p className="text-sm font-semibold text-gray-900">
-                      {selectedItem?.telegram_id || selectedItem?.user_id || "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Tanggal:</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Tanggal:</span>
+                    <span className="text-sm text-gray-900">
                       {selectedItem?.timestamp
                         ? new Date(selectedItem.timestamp).toLocaleDateString("id-ID")
                         : selectedItem?.tanggal || "-"}
-                    </p>
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Ekosistem:</p>
-                    <p className="text-sm font-semibold text-gray-900">{selectedItem?.ekosistem || "-"}</p>
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Kategori:</span>
+                    <span className="text-sm text-gray-900">{selectedItem?.kategori || "-"}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Nama POI:</span>
+                    <span className="text-sm text-gray-900">
+                      {selectedItem?.poi_name || selectedItem?.namaPOI || "-"}
+                    </span>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Detail Provider:</span>
+                    <span className="text-sm text-gray-900">
+                      {selectedItem?.provider_detail || selectedItem?.detailProvider || "-"}
+                    </span>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Detail Feedback:</span>
+                    <span className="text-sm text-gray-900">
+                      {selectedItem?.feedback_detail || selectedItem?.detailFeedback || "-"}
+                    </span>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-bold text-black w-32">Detail Informasi:</span>
+                    <span className="text-sm text-gray-900">
+                      {selectedItem?.detail_info || selectedItem?.detailInformasi || "-"}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Loading State */}
+              {/* Loading State - tetap sama */}
               {loadingPhotos && (
-                <div className="flex items-center justify-center py-16">
+                <div className="flex items-center justify-center py-12"> {/* Kurangi padding dari py-16 ke py-12 */}
                   <div className="flex flex-col items-center">
-                    <Loader2 className="animate-spin text-red-600 mb-2" size={32} />
-                    <span className="text-gray-600">Memuat foto...</span>
+                    <Loader2 className="animate-spin text-red-600 mb-2" size={24} /> {/* Kurangi size dari 32 ke 24 */}
+                    <span className="text-gray-600 text-sm">Memuat foto...</span> {/* Tambah text-sm */}
                   </div>
                 </div>
               )}
 
-              {/* Error State */}
-              {photoError && (
-                <div className="px-6 py-8">
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                    <div className="flex items-start">
-                      <AlertCircle className="text-red-600 mr-2 mt-1" size={20} />
-                      <div className="flex-1">
-                        <h4 className="text-red-800 font-medium">Gagal memuat foto</h4>
-                        <p className="text-red-600 text-sm mt-1">{photoError}</p>
-
-                        {/* Match Info */}
-                        {matchInfo && (
-                          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                            <p className="text-xs font-medium text-gray-700 mb-2">Debug Info:</p>
-                            <div className="text-xs text-gray-600 space-y-1">
-                              {matchInfo.searchCriteria && (
-                                <div>
-                                  <p>
-                                    <strong>Search Criteria:</strong>
-                                  </p>
-                                  <ul className="list-disc list-inside ml-2">
-                                    <li>Telegram ID: {matchInfo.searchCriteria.telegram_id || "N/A"}</li>
-                                    <li>POI Name: {matchInfo.searchCriteria.poi_name || "N/A"}</li>
-                                    <li>Photo Filename: {matchInfo.searchCriteria.photo_filename || "N/A"}</li>
-                                    <li>Timestamp: {matchInfo.searchCriteria.timestamp || "N/A"}</li>
-                                  </ul>
-                                </div>
-                              )}
-                              {matchInfo.availableFiles && (
-                                <div>
-                                  <p>
-                                    <strong>Available files for this user:</strong>
-                                  </p>
-                                  <ul className="list-disc list-inside ml-2">
-                                    {matchInfo.availableFiles.slice(0, 5).map((file: string, index: number) => (
-                                      <li key={index}>{file}</li>
-                                    ))}
-                                    {matchInfo.availableFiles.length > 5 && (
-                                      <li>... and {matchInfo.availableFiles.length - 5} more</li>
-                                    )}
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Photo Display */}
+              {/* Photo Display - ukuran foto diperkecil */}
               {!loadingPhotos && !photoError && photos.length > 0 && (
-                <div className="px-6 py-6">
-                  {/* Match Info */}
-                  {matchInfo && matchInfo.matchReason && (
-                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <div className="flex items-center">
-                        <Info className="text-blue-600 mr-2" size={16} />
-                        <div className="text-sm">
-                          <span className="font-medium text-blue-800">Match Method: </span>
-                          <span className="text-blue-700">{getMatchReasonText(matchInfo.matchReason)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="bg-gray-50 rounded-xl overflow-hidden border border-gray-200 shadow-inner">
+                <div className="px-6 py-4"> {/* Kurangi padding dari py-6 ke py-4 */}
+                  <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-200 shadow-inner"> {/* Ubah dari rounded-xl ke rounded-lg */}
                     <img
                       src={photos[0].fullUrl || "/placeholder.svg"}
                       alt={`Foto kunjungan`}
-                      className="w-full object-contain max-h-[500px]"
+                      className="w-full object-contain max-h-[300px]" // Kurangi dari max-h-[500px] ke max-h-[300px]
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
-                        target.src = "/placeholder.svg?height=400&width=600&text=Foto tidak dapat dimuat"
+                        target.src = "/placeholder.svg?height=300&width=400&text=Foto tidak dapat dimuat" // Sesuaikan placeholder size
                       }}
                     />
                   </div>
 
-                  {/* Filename */}
-                  <div className="mt-3 text-center">
+                  {/* Filename - lebih compact */}
+                  <div className="mt-2 text-center"> {/* Kurangi margin dari mt-3 ke mt-2 */}
                     <p className="text-xs text-gray-500 bg-gray-50 py-1 px-2 rounded-md inline-block">
                       {photos[0].filename}
                     </p>
@@ -1193,22 +1146,22 @@ const DashboardAdmin = () => {
                 </div>
               )}
 
-              {/* No Photos */}
+              {/* No Photos - lebih compact */}
               {!loadingPhotos && !photoError && photos.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="bg-gray-50 rounded-full p-4 mb-4">
-                    <ImageIcon className="text-gray-400" size={32} />
+                <div className="flex flex-col items-center justify-center py-12"> {/* Kurangi dari py-16 ke py-12 */}
+                  <div className="bg-gray-50 rounded-full p-3 mb-3"> {/* Kurangi padding dan margin */}
+                    <ImageIcon className="text-gray-400" size={24} /> {/* Kurangi dari 32 ke 24 */}
                   </div>
-                  <p className="text-gray-700 font-medium">Tidak ada foto tersedia</p>
-                  <p className="text-sm text-gray-500 mt-1">Tidak ditemukan foto untuk kunjungan ini</p>
+                  <p className="text-gray-700 font-medium text-sm">Tidak ada foto tersedia</p> {/* Tambah text-sm */}
+                  <p className="text-xs text-gray-500 mt-1">Tidak ditemukan foto untuk kunjungan ini</p> {/* Ubah ke text-xs */}
                 </div>
               )}
 
-              {/* Footer */}
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+              {/* Footer - tetap sama tapi bisa diperkecil */}
+              <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-end"> {/* Kurangi padding dari py-4 ke py-3 */}
                 <button
                   onClick={() => setShowPhotoModal(false)}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 text-sm text-red-700 bg-white border border-red-700 rounded-md hover:bg-red-100 transition-colors"
                 >
                   Tutup
                 </button>
