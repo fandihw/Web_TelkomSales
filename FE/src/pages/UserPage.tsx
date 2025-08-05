@@ -1,10 +1,29 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useRef, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Search, ChevronDown, LogOut, Home, BarChart3, Plus, X, AlertTriangle, Trash, User, UserSearch, UserPlus2Icon } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  ChevronDown,
+  LogOut,
+  Home,
+  BarChart3,
+  Plus,
+  X,
+  AlertTriangle,
+  Trash,
+  UserSearch,
+  UserPlus2Icon,
+  Edit,
+  Eye,
+  EyeOff,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
-interface User {
+interface UserInterface {
   _id: string
   name: string
   email: string
@@ -34,14 +53,25 @@ const UsersPage = () => {
   })
 
   // State untuk data management
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<UserInterface[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   // State untuk delete confirmation
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+  const [userToDelete, setUserToDelete] = useState<UserInterface | null>(null)
   const [deleting, setDeleting] = useState(false)
+
+  // State untuk edit modal
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [userToEdit, setUserToEdit] = useState<UserInterface | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [editFormData, setEditFormData] = useState({
+    email: "",
+    password: "",
+  })
+  const [showEditPassword, setShowEditPassword] = useState(false)
+  const [editErrors, setEditErrors] = useState<{ [key: string]: string }>({})
 
   // Check authorization
   useEffect(() => {
@@ -141,6 +171,131 @@ const UsersPage = () => {
     }
   }
 
+  // Edit user
+  const editUser = async (userId: string, userData: { email: string; password?: string }) => {
+    try {
+      setEditing(true)
+      setEditErrors({})
+
+      const token = localStorage.getItem("token")
+      if (!token) {
+        throw new Error("Token tidak ditemukan")
+      }
+
+      console.log("✏️ Editing user:", userId)
+
+      const requestBody: any = {
+        email: userData.email.trim(),
+      }
+
+      // Only include password if it's provided
+      if (userData.password && userData.password.trim()) {
+        requestBody.password = userData.password
+      }
+
+      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Server error" }))
+        throw new Error(errorData.message || `HTTP ${response.status}`)
+      }
+
+      const result = await response.json()
+      console.log("✅ User updated successfully:", result)
+
+      // Refresh users list
+      await fetchUsers()
+      setShowEditModal(false)
+      setUserToEdit(null)
+      setEditFormData({ email: "", password: "" })
+
+      alert("User berhasil diupdate!")
+    } catch (err: any) {
+      console.error("❌ Error updating user:", err)
+      setEditErrors({ submit: err.message })
+    } finally {
+      setEditing(false)
+    }
+  }
+
+  // Handle edit click
+  const handleEditClick = (user: UserInterface) => {
+    // Check if current user is superadmin
+    const currentRole = localStorage.getItem("role")
+    if (currentRole !== "superadmin") {
+      alert("Akses ditolak. Hanya Super Admin yang dapat mengedit user.")
+      return
+    }
+
+    setUserToEdit(user)
+    setEditFormData({
+      email: user.email,
+      password: "",
+    })
+    setEditErrors({})
+    setShowEditModal(true)
+  }
+
+  const handleEditCancel = () => {
+    setShowEditModal(false)
+    setUserToEdit(null)
+    setEditFormData({ email: "", password: "" })
+    setEditErrors({})
+    setShowEditPassword(false)
+  }
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // Validation
+    const errors: { [key: string]: string } = {}
+
+    if (!editFormData.email.trim()) {
+      errors.email = "Email wajib diisi"
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(editFormData.email)) {
+        errors.email = "Format email tidak valid"
+      }
+    }
+
+    if (editFormData.password && editFormData.password.length < 6) {
+      errors.password = "Password minimal 6 karakter"
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setEditErrors(errors)
+      return
+    }
+
+    if (userToEdit) {
+      editUser(userToEdit._id, editFormData)
+    }
+  }
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+
+    // Clear error when user starts typing
+    if (editErrors[name]) {
+      setEditErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }))
+    }
+  }
+
   // useEffect untuk fetch data saat komponen dimount
   useEffect(() => {
     fetchUsers()
@@ -183,11 +338,22 @@ const UsersPage = () => {
   }
 
   const handleAddUser = () => {
-    navigate("/register")
+    const role = localStorage.getItem("role")
+    if (role === "superadmin") {
+      navigate("/register")
+    } else {
+      alert("Akses ditolak. Hanya Super Admin yang dapat mendaftarkan akun baru.")
+    }
   }
 
   // Handle delete confirmation
-  const handleDeleteClick = (user: User) => {
+  const handleDeleteClick = (user: UserInterface) => {
+    // Check if current user is superadmin
+    const currentRole = localStorage.getItem("role")
+    if (currentRole !== "superadmin") {
+      alert("Akses ditolak. Hanya Super Admin yang dapat menghapus user.")
+      return
+    }
     setUserToDelete(user)
     setShowDeleteModal(true)
   }
@@ -205,7 +371,7 @@ const UsersPage = () => {
 
   // Apply filters
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = 
+    const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.role.toLowerCase().includes(searchTerm.toLowerCase())
@@ -374,7 +540,7 @@ const UsersPage = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleAddUser}
-                className="flex items-center space-x-2 px-4 py-2 text-red-700 bg-white border border-red-700 rounded-md hover:bg-red-100 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 text-red-700 bg-white border border-red-700 rounded-md hover:bg-red-50 transition-colors"
                 disabled={loading}
               >
                 <Plus size={16} />
@@ -509,10 +675,7 @@ const UsersPage = () => {
                     {filterRole && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
                         Role: {getRoleLabel(filterRole)}
-                        <button
-                          onClick={() => setFilterRole("")}
-                          className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
-                        >
+                        <button onClick={() => setFilterRole("")} className="ml-1 hover:bg-blue-200 rounded-full p-0.5">
                           <X size={12} />
                         </button>
                       </span>
@@ -554,13 +717,11 @@ const UsersPage = () => {
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {user.email}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {user.name}
-                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{user.name}</td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <span
                                 className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadge(
-                                  user.role
+                                  user.role,
                                 )}`}
                               >
                                 {getRoleLabel(user.role)}
@@ -570,19 +731,28 @@ const UsersPage = () => {
                               {user.telegram_id || "-"}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {user.createdAt 
-                                ? new Date(user.createdAt).toLocaleDateString("id-ID")
-                                : "-"
-                              }
+                              {user.createdAt ? new Date(user.createdAt).toLocaleDateString("id-ID") : "-"}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                              <button
-                                onClick={() => handleDeleteClick(user)}
-                                className="text-red-700 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
-                                title="Hapus User"
-                              >
-                                <Trash size={16} />
-                              </button>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() => handleEditClick(user)}
+                                  className="text-red-700 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                                  title="Edit User"
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                {/* Conditional rendering for Delete button */}
+                                {currentUser.role === "Super Admin" && (
+                                  <button
+                                    onClick={() => handleDeleteClick(user)}
+                                    className="text-red-700 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                                    title="Hapus User"
+                                  >
+                                    <Trash size={16} />
+                                  </button>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -634,7 +804,7 @@ const UsersPage = () => {
                               onClick={() => handlePageChange(page)}
                               className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                 page === currentPage
-                                  ? "z-10 bg-red-50 border-red-500 text-red-600"
+                                  ? "z-10 border-red-700 text-red-700"
                                   : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                               }`}
                             >
@@ -665,9 +835,7 @@ const UsersPage = () => {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <p className="text-sm text-black">
-                    Apakah Anda yakin ingin menghapus user berikut?
-                  </p>
+                  <p className="text-sm text-black">Apakah Anda yakin ingin menghapus user berikut?</p>
                   <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm font-medium text-gray-900">Nama: {userToDelete.name}</p>
                     <p className="text-sm text-gray-800">Email: {userToDelete.email}</p>
@@ -700,6 +868,124 @@ const UsersPage = () => {
                     )}
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit User Modal */}
+        {showEditModal && userToEdit && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+              <div className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex-shrink-0">
+                    <Edit className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-lg font-medium text-gray-900">Edit User</h3>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600 mb-3">
+                    Edit informasi untuk user: <strong>{userToEdit.name}</strong>
+                  </p>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-700">
+                      Role: <span className="font-medium">{getRoleLabel(userToEdit.role)}</span>
+                    </p>
+                    <p className="text-sm text-gray-700">
+                      Telegram ID: <span className="font-medium">{userToEdit.telegram_id || "-"}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Error Message */}
+                {editErrors.submit && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                    <p className="text-red-600 text-sm">{editErrors.submit}</p>
+                  </div>
+                )}
+
+                <form onSubmit={handleEditSubmit} className="space-y-4">
+                  {/* Email Field */}
+                  <div>
+                    <label htmlFor="edit-email" className="block text-sm font-medium text-gray-700 mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="edit-email"
+                      name="email"
+                      value={editFormData.email}
+                      onChange={handleEditInputChange}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                        editErrors.email ? "border-red-500 bg-red-50" : "border-gray-300"
+                      }`}
+                      placeholder="Masukkan email baru"
+                      disabled={editing}
+                      required
+                    />
+                    {editErrors.email && <p className="text-red-600 text-sm mt-1">{editErrors.email}</p>}
+                  </div>
+
+                  {/* Password Field */}
+                  <div>
+                    <label htmlFor="edit-password" className="block text-sm font-medium text-gray-700 mb-1">
+                      Password Baru <span className="text-gray-500">(Opsional)</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showEditPassword ? "text" : "password"}
+                        id="edit-password"
+                        name="password"
+                        value={editFormData.password}
+                        onChange={handleEditInputChange}
+                        className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-red-700 focus:border-red-500 transition-colors ${
+                          editErrors.password ? "border-red-500 bg-red-50" : "border-gray-300"
+                        }`}
+                        placeholder="Kosongkan jika tidak ingin mengubah password"
+                        disabled={editing}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowEditPassword(!showEditPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        disabled={editing}
+                      >
+                        {showEditPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                    {editErrors.password && <p className="text-red-600 text-sm mt-1">{editErrors.password}</p>}
+                    <p className="text-xs text-gray-500 mt-1">Minimal 6 karakter jika diisi</p>
+                  </div>
+
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={handleEditCancel}
+                      disabled={editing}
+                      className="px-4 py-2 text-sm font-medium text-red-800 bg-white border border-red-700 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={editing}
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-700 border border-transparent rounded-md hover:bg-red-800 transition-colors disabled:opacity-50"
+                    >
+                      {editing ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Menyimpan...
+                        </div>
+                      ) : (
+                        "Simpan Perubahan"
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

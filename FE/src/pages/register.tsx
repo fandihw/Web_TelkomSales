@@ -168,7 +168,7 @@ export default function Register() {
       if (!token) {
         throw new Error("Token tidak ditemukan. Silakan login ulang.")
       }
-      
+
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
@@ -184,17 +184,15 @@ export default function Register() {
         }),
       })
 
-      console.log("📡 Response status:", response.status)
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: "Server error" }))
         throw new Error(errorData.message || `HTTP ${response.status}`)
       }
 
       const result = await response.json()
-      console.log("✅ Registration successful:", result)
+      console.log("Registration successful:", result)
 
-      setSuccess("✅ Akun berhasil didaftarkan!")
+      setSuccess("Akun berhasil didaftarkan!")
 
       // Reset form
       setFormData({
@@ -205,12 +203,11 @@ export default function Register() {
         role: "",
       })
 
-      // Show success message for 2 seconds then redirect
       setTimeout(() => {
         navigate("/dashboardAdmin")
       }, 2000)
     } catch (error: any) {
-      console.error("❌ Registration error:", error)
+      console.error("Registration error:", error)
       setErrors({ submit: error.message || "Terjadi kesalahan saat mendaftarkan akun" })
     } finally {
       setIsLoading(false)
@@ -226,7 +223,7 @@ export default function Register() {
     navigate("/login")
   }
 
-  // Navigate back to dashboard
+  // Navigate to dashboard
   const handleBackToDashboard = () => {
     navigate("/dashboardAdmin")
   }
@@ -279,7 +276,7 @@ export default function Register() {
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
           >
             <UserSearch size={20} />
-            {!sidebarCollapsed && <span className="font-medium">User</span>}
+            {!sidebarCollapsed && <span className="font-medium">User Management</span>}
           </button>
 
           <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors">
@@ -334,7 +331,7 @@ export default function Register() {
             )}
           </div>
 
-          {/* Collapsed state - just show logout icon */}
+          {/* logout icon */}
           {sidebarCollapsed && (
             <button
               onClick={handleLogout}

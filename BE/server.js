@@ -50,7 +50,15 @@ app.use("/api/auth", authRoutes)
 app.use("/api", visitDataRoutes)
 app.use("/api", dataRoutes)
 app.use("/api", photoRoutes)
-app.use("/api", userRoutes)
+app.use("/api", userRoutes) // Pastikan ini ada dan benar
+
+// Temporary test PUT route
+app.put("/api/test-put/:id", (req, res) => {
+  console.log("✅ Temporary PUT /api/test-put/:id hit!")
+  console.log("Params:", req.params)
+  console.log("Body:", req.body)
+  res.json({ message: `Test PUT successful for ID: ${req.params.id}`, receivedBody: req.body })
+})
 
 // Health check endpoint dengan timestamp
 app.get("/api/health", (req, res) => {
@@ -69,8 +77,10 @@ app.get("/api/health", (req, res) => {
       "GET /api/photos/:telegram_id",
       "GET /api/photo-detail/:filename",
       "GET /api/users",
+      "PUT /api/users/:id", // Tambahkan ini
       "DELETE /api/users/:id",
       "GET /api/users/:id",
+      "PUT /api/test-put/:id (Temporary Test Route)", // Tambahkan ini
     ],
   })
 })
@@ -92,8 +102,10 @@ app.use("*", (req, res) => {
       "GET /api/photos/:telegram_id",
       "GET /api/photo-detail/:filename",
       "GET /api/users",
+      "PUT /api/users/:id",
       "DELETE /api/users/:id",
       "GET /api/users/:id",
+      "PUT /api/test-put/:id (Temporary Test Route)",
     ],
   })
 })
@@ -120,6 +132,9 @@ app.listen(PORT, () => {
   console.log("   - GET  http://localhost:" + PORT + "/api/photos/:telegram_id")
   console.log("   - GET  http://localhost:" + PORT + "/api/photo-detail/:filename")
   console.log("   - GET  http://localhost:" + PORT + "/api/users")
+  console.log("   - PUT  http://localhost:" + PORT + "/api/users/:id")
   console.log("   - DELETE http://localhost:" + PORT + "/api/users/:id")
   console.log("   - GET  http://localhost:" + PORT + "/api/users/:id")
+  console.log("   - PUT  http://localhost:" + PORT + "/api/test-put/:id (Temporary Test Route)")
+  console.log("-----------------------------------\n")
 })

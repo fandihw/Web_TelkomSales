@@ -1345,7 +1345,7 @@ const VisualisasiData = () => {
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
           >
             <UserSearch size={20} />
-            {!sidebarCollapsed && <span className="font-medium">User</span>}
+            {!sidebarCollapsed && <span className="font-medium">User Management</span>}
           </button>
 
           <button
